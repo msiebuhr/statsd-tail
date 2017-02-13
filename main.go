@@ -23,7 +23,16 @@ func displayMetric(data *dogstatsd.Metric) {
 		widestTagsSeen = len(tags)
 	}
 
-	fmtString := fmt.Sprintf("%%-%ds  %%-%ds  %%0.2f\n", widestNameSeen, widestTagsSeen)
+	fmtString := fmt.Sprintf("%%-%ds  %%-%ds ", widestNameSeen, widestTagsSeen)
+
+	switch data.Value.(type) {
+	case float32, float64:
+		fmtString += "%0.2f\n"
+	case int, int32, int64:
+		fmtString += "%d\n"
+	default:
+		fmtString += "%v\n"
+	}
 
 	// TODO: Drop in a timestamp...
 	fmt.Printf(fmtString, data.Name, tags, data.Value)
