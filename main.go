@@ -69,8 +69,9 @@ func main() {
 			metrics[i], err = dogstatsd.Parse(line)
 			if err != nil {
 				fmt.Printf("ERR: %s -> %+v\n", line, err)
+			} else {
+				displayMetric(metrics[i])
 			}
-			displayMetric(metrics[i])
 		}
 	}
 }
