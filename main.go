@@ -2,13 +2,28 @@ package main
 
 import (
 	"fmt"
-	"github.com/narqo/go-dogstatsd-parser"
 	"net"
 	"strings"
+	"sort"
+
+	"github.com/narqo/go-dogstatsd-parser"
 )
 
 var widestNameSeen int
 var widestTagsSeen int
+
+func printTags(tags map[string]string) string {
+	keys := make([]string, 0, len(tags))
+
+	// Copy over names and sort them
+	for key,value := range tags {
+		keys = append(keys, key + ":" + value)
+	}
+
+	sort.Strings(keys)
+
+	return strings.Join(keys, ",")
+}
 
 func displayMetric(data *dogstatsd.Metric) {
 	// Update widths
@@ -17,7 +32,7 @@ func displayMetric(data *dogstatsd.Metric) {
 	}
 
 	// TODO: Stringify tags uniformly
-	tags := fmt.Sprintf("%v", data.Tags)
+	tags := printTags(data.Tags)
 
 	if len(tags) > widestTagsSeen {
 		widestTagsSeen = len(tags)
